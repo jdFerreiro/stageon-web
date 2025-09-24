@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "build:lib": "babel src --out-dir dist --ignore 'src/App.js','src/App.css','src/index.css','src/reportWebVitals.js','src/setupTests.js'"
+  }
+}

@@ -1,6 +1,6 @@
 import React from "react";
 import InternalLayout from "./InternalLayout";
-import { PerfilScreen } from "@jdFerreiro/identity-microservice";
+import { PerfilScreen } from 'identity-microservice/dist/identity-microservice.es.js';
 
 const Profile = () => {
   return (

@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
-import { LoginScreen } from '@jdFerreiro/identity-microservice';
+// import { LoginScreen } from '@jdFerreiro/identity-microservice';
+import { LoginScreen } from 'identity-microservice/dist/identity-microservice.es.js';
 import Typography from '@mui/material/Typography';
 
 const apiUrl = process.env.REACT_APP_API_URL || process.env.VITE_API_URL || 'https://localhost:7010';
@@ -30,15 +31,14 @@ const Login = () => {
     const token = userData.access_token;
     console.log('Token:', token);
     const payload = decodeJwtPayload(token);
-    console.log('Payload decodificado:', payload);  
 
     // Puedes guardarlo en sessionStorage si lo necesitas
-    sessionStorage.setItem('token', token);
-    sessionStorage.setItem('userId', payload.sub);
-    sessionStorage.setItem('userName', payload.firstName + ' ' + payload.lastName);
-    sessionStorage.setItem('userRole', payload.roleName);
-    sessionStorage.setItem('userRoleId', payload.roleId);
-    sessionStorage.setItem('email', payload.email);
+    sessionStorage.setItem('uToken', token);
+    sessionStorage.setItem('uId', payload.sub);
+    sessionStorage.setItem('uName', payload.firstName + ' ' + payload.lastName);
+    sessionStorage.setItem('uRole', payload.roleName);
+    sessionStorage.setItem('uRoleId', payload.roleId);
+    sessionStorage.setItem('uEmail', payload.email);
 
     // Redirigir al dashboard
     navigate('/dashboard');

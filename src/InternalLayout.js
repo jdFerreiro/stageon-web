@@ -39,6 +39,10 @@ const InternalLayout = ({ children }) => {
     sessionStorage.clear();
     window.location.href = '/login';
   };
+    const handleProfile = () => {
+      window.location.href = '/profile';
+      handleClose();
+    };
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
@@ -82,10 +86,10 @@ const InternalLayout = ({ children }) => {
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'left' }}
             >
-              <MenuItem onClick={handleClose}>Perfil</MenuItem>
+                <MenuItem onClick={handleProfile}>Perfil</MenuItem>
               <Divider />
               <MenuItem onClick={handleLogout}>Salir</MenuItem>
             </Menu>
@@ -112,7 +116,19 @@ const InternalLayout = ({ children }) => {
           </List>
         </Box>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, bgcolor: '#f4f6f8', p: 3, ml: `${drawerWidth}px` }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          bgcolor: '#f4f6f8',
+          p: 3,
+          pl: 0,
+          width: `calc(100vw - ${drawerWidth}px)`,
+          maxWidth: `calc(100vw - ${drawerWidth}px)`,
+          minHeight: '100vh',
+          boxSizing: 'border-box',
+        }}
+      >
         <Toolbar />
         {children}
       </Box>

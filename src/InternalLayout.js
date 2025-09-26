@@ -155,14 +155,14 @@ const InternalLayout = ({ children }) => {
         <Box sx={{ overflow: 'auto' }}>
           <List>
             {menuItems.map((item, idx) => {
+              // Only show 'Configuración' submenu for admin users (case-insensitive, null-safe)
+              if (item.text === 'Configuración' && String(userRole).toLowerCase() !== 'administrador') {
+                return null;
+              }
               if (item.children) {
-                // Solo mostrar el submenú de configuración si el usuario es administrador
-                if (item.text === 'Configuración' && userRole !== 'Administrador') {
-                  return null;
-                }
                 return (
                   <React.Fragment key={item.text}>
-                    <ListItem button onClick={() => setOpenConfig(!openConfig)}>
+                    <ListItem button={true} onClick={() => setOpenConfig(!openConfig)}>
                       <ListItemIcon>{item.icon}</ListItemIcon>
                       <ListItemText primary={item.text} />
                       {openConfig ? <ExpandLess /> : <ExpandMore />}
@@ -170,7 +170,11 @@ const InternalLayout = ({ children }) => {
                     <Collapse in={openConfig} timeout="auto" unmountOnExit>
                       <List component="div" disablePadding sx={{ pl: 4 }}>
                         {item.children.map((sub, subIdx) => (
-                          <ListItem button key={sub.text} component="a" href={sub.path}>
+                          <ListItem 
+                            button={true} 
+                            key={sub.text} 
+                            onClick={() => navigate(sub.path)}
+                          >
                             {sub.icon && <ListItemIcon>{sub.icon}</ListItemIcon>}
                             <ListItemText primary={sub.text} />
                           </ListItem>
@@ -181,7 +185,11 @@ const InternalLayout = ({ children }) => {
                 );
               } else {
                 return (
-                  <ListItem button key={item.text} component="a" href={item.path}>
+                  <ListItem 
+                    button={true}
+                    key={item.text} 
+                    onClick={() => navigate(item.path)}
+                  >
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.text} />
                   </ListItem>

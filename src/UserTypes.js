@@ -1,9 +1,11 @@
+
 import React from "react";
 import Box from "@mui/material/Box";
 import InternalLayout from "./InternalLayout";
-import { PerfilScreen } from '@jdFerreiro/identity-microservice';
+import { UserTypesListScreen } from '@jdFerreiro/identity-microservice';
 
-const Profile = () => {
+
+const UserTypes = () => {
   return (
     <InternalLayout>
       <Box
@@ -14,15 +16,14 @@ const Profile = () => {
           maxWidth: '100%',
           height: '100%',
           maxHeight: 'calc(100vh - 120px)',
-          overflowY: 'hidden',
-          overflowX: 'auto',
+          overflow: 'auto',
           boxSizing: 'border-box',
         }}
       >
-        <PerfilScreen />
+        <UserTypesListScreen />
       </Box>
     </InternalLayout>
   );
 };
 
-export default Profile;
+export default UserTypes;

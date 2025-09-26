@@ -9,6 +9,10 @@ import Contacto from './Contacto';
 import Login from './Login';
 import Dashboard from './InternalDashboard';
 import Profile from './Profile';
+import Users from './Users';
+import Roles from './Roles';
+import Clubes from './Clubes';
+import UserTypes from './UserTypes';
 
 
 function App() {
@@ -20,7 +24,11 @@ function App() {
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/internalprofile" element={<Profile />} />
+        <Route path="/internalusers" element={<Users />} />
+        <Route path="/internalRoles" element={<Roles />} />
+        <Route path="/internalClubes" element={<Clubes />} />
+        <Route path="/internalUserTypes" element={<UserTypes />} />
       </Routes>
     </Layout>
   );

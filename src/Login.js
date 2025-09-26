@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
-// import { LoginScreen } from '@jdFerreiro/identity-microservice';
-import { LoginScreen } from 'identity-microservice/dist/identity-microservice.es.js';
+import { LoginScreen } from '@jdFerreiro/identity-microservice';
 import Typography from '@mui/material/Typography';
 
 const apiUrl = process.env.REACT_APP_API_URL || process.env.VITE_API_URL || 'https://localhost:7010';
@@ -32,7 +31,6 @@ const Login = () => {
     console.log('Token:', token);
     const payload = decodeJwtPayload(token);
 
-    // Puedes guardarlo en sessionStorage si lo necesitas
     sessionStorage.setItem('uToken', token);
     sessionStorage.setItem('uId', payload.sub);
     sessionStorage.setItem('uName', payload.firstName + ' ' + payload.lastName);

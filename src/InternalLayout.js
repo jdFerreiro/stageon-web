@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Collapse from '@mui/material/Collapse';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import { useNavigate } from 'react-router-dom';
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -14,20 +18,57 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import { 
+  AccountCircle, 
+  Settings, 
+  Groups3, 
+  AddModeratorRounded, 
+  ManageAccounts, 
+  AdminPanelSettings  
+} from '@mui/icons-material';
 
 const drawerWidth = 220;
 
 const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-  // Puedes agregar más opciones aquí
-  { text: 'Salir', icon: <LogoutIcon />, path: '/login' },
+  { text: 'Configuración', icon: <Settings />,
+    children: 
+    [
+      { text: 'Usuarios', icon: <ManageAccounts />, path: '/internalusers' },
+      { text: 'Roles', icon: <AddModeratorRounded />, path: '/internalRoles' },
+      { text: 'Clubes', icon: <Groups3 />, path: '/internalClubes' },
+      { text: 'Tipo de Usuarios', icon: <AdminPanelSettings />, path: '/internalUserTypes' },
+    ]
+  },
 ];
 
 const InternalLayout = ({ children }) => {
-  const userName = sessionStorage.getItem('userName');
+  const userName = sessionStorage.getItem('uName');
+  const userRole = sessionStorage.getItem('uRole');
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
+  const [openConfig, setOpenConfig] = useState(false);
+
+  // Verifica vigencia del token
+  useEffect(() => {
+    const token = sessionStorage.getItem('uToken');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (!payload.exp || (payload.exp * 1000) < Date.now()) {
+        sessionStorage.clear();
+        navigate('/login');
+      }
+    } catch (e) {
+      sessionStorage.clear();
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -37,12 +78,12 @@ const InternalLayout = ({ children }) => {
   };
   const handleLogout = () => {
     sessionStorage.clear();
-    window.location.href = '/login';
+    navigate('/login');
   };
-    const handleProfile = () => {
-      window.location.href = '/profile';
-      handleClose();
-    };
+  const handleProfile = () => {
+    navigate('/internalprofile');
+    handleClose();
+  };
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
@@ -79,7 +120,7 @@ const InternalLayout = ({ children }) => {
             >
               <AccountCircle />
               <Typography variant="subtitle1" component="span" sx={{ ml: 1 }}>
-                {userName ? userName : 'Usuario'}
+                {userName ? userName : 'No Identificado'}
               </Typography>
             </IconButton>
             <Menu
@@ -89,9 +130,15 @@ const InternalLayout = ({ children }) => {
               anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
               transformOrigin={{ vertical: 'top', horizontal: 'left' }}
             >
-                <MenuItem onClick={handleProfile}>Perfil</MenuItem>
+                <MenuItem onClick={handleProfile}>
+                  <ListItemIcon><AccountCircle /></ListItemIcon>
+                  Perfil
+                </MenuItem>
               <Divider />
-              <MenuItem onClick={handleLogout}>Salir</MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <ListItemIcon><LogoutIcon /></ListItemIcon>
+                  Salir
+                </MenuItem>
             </Menu>
           </Box>
         </Toolbar>
@@ -107,12 +154,40 @@ const InternalLayout = ({ children }) => {
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
           <List>
-            {menuItems.map((item, idx) => (
-              <ListItem button key={item.text} component="a" href={item.path}>
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItem>
-            ))}
+            {menuItems.map((item, idx) => {
+              if (item.children) {
+                // Solo mostrar el submenú de configuración si el usuario es administrador
+                if (item.text === 'Configuración' && userRole !== 'Administrador') {
+                  return null;
+                }
+                return (
+                  <React.Fragment key={item.text}>
+                    <ListItem button onClick={() => setOpenConfig(!openConfig)}>
+                      <ListItemIcon>{item.icon}</ListItemIcon>
+                      <ListItemText primary={item.text} />
+                      {openConfig ? <ExpandLess /> : <ExpandMore />}
+                    </ListItem>
+                    <Collapse in={openConfig} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding sx={{ pl: 4 }}>
+                        {item.children.map((sub, subIdx) => (
+                          <ListItem button key={sub.text} component="a" href={sub.path}>
+                            {sub.icon && <ListItemIcon>{sub.icon}</ListItemIcon>}
+                            <ListItemText primary={sub.text} />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Collapse>
+                  </React.Fragment>
+                );
+              } else {
+                return (
+                  <ListItem button key={item.text} component="a" href={item.path}>
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.text} />
+                  </ListItem>
+                );
+              }
+            })}
           </List>
         </Box>
       </Drawer>
@@ -123,13 +198,14 @@ const InternalLayout = ({ children }) => {
           bgcolor: '#f4f6f8',
           p: 3,
           pl: 0,
+          ml: 0,
           width: `calc(100vw - ${drawerWidth}px)`,
           maxWidth: `calc(100vw - ${drawerWidth}px)`,
           minHeight: '100vh',
           boxSizing: 'border-box',
         }}
       >
-        <Toolbar />
+        <Toolbar sx={{ pl: 0, ml: 0 }} />
         {children}
       </Box>
     </Box>
